@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { User, BookOpen, Clock, Calendar, Mail, FileText } from 'lucide-react';
+import { API_BASE_URL, getMediaUrl } from '../config/api';
 
 const Github = ({ size = 24, ...props }) => (
   <svg
@@ -44,10 +45,6 @@ const TutorProfile = () => {
     const { id } = useParams();
     const { token, user } = useContext(AuthContext);
     const navigate = useNavigate();
-    const getMediaUrl = (path) => {
-        if (!path) return '';
-        return path.startsWith('http') ? path : `http://localhost:5000${path}`;
-    };
     
     const [tutor, setTutor] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -68,7 +65,7 @@ const TutorProfile = () => {
     useEffect(() => {
         const fetchTutor = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/users/${id}`, {
+                const res = await fetch(`${API_BASE_URL}/api/users/${id}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const data = await res.json();
@@ -88,7 +85,7 @@ const TutorProfile = () => {
     const handleRequestDemo = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:5000/api/requests`, {
+            const res = await fetch(`${API_BASE_URL}/api/requests`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',
@@ -114,7 +111,7 @@ const TutorProfile = () => {
     const handleConnectTutor = async (e) => {
         e.preventDefault();
         try {
-            const res = await fetch(`http://localhost:5000/api/connections`, {
+            const res = await fetch(`${API_BASE_URL}/api/connections`, {
                 method: 'POST',
                 headers: { 
                     'Content-Type': 'application/json',

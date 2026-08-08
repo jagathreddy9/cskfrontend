@@ -3,13 +3,10 @@ import { AuthContext } from '../context/AuthContext';
 import { Search, Star, Clock, MessageSquare, CheckCircle, AlertTriangle, FileText, Users } from 'lucide-react';
 import { Navigate, Link } from 'react-router-dom';
 import ChatWindow from '../components/ChatWindow';
+import { API_BASE_URL, getMediaUrl } from '../config/api';
 
 const Dashboard = () => {
   const { user, token } = useContext(AuthContext);
-  const getMediaUrl = (path) => {
-    if (!path) return '';
-    return path.startsWith('http') ? path : `http://localhost:5000${path}`;
-  };
   const [tutors, setTutors] = useState([]);
   const [searchSkill, setSearchSkill] = useState('');
   const [requests, setRequests] = useState([]);
@@ -45,7 +42,7 @@ const Dashboard = () => {
 
   const fetchTutors = async (skill = '') => {
     try {
-      const res = await fetch(`http://localhost:5000/api/users/tutors?skill=${skill}`, {
+      const res = await fetch(`${API_BASE_URL}/api/users/tutors?skill=${skill}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -57,7 +54,7 @@ const Dashboard = () => {
 
   const fetchRequests = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/requests`, {
+      const res = await fetch(`${API_BASE_URL}/api/requests`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -69,7 +66,7 @@ const Dashboard = () => {
 
   const fetchSessions = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/sessions`, {
+      const res = await fetch(`${API_BASE_URL}/api/sessions`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -81,7 +78,7 @@ const Dashboard = () => {
 
   const fetchConnections = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/connections`, {
+      const res = await fetch(`${API_BASE_URL}/api/connections`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
@@ -93,7 +90,7 @@ const Dashboard = () => {
 
   const handleConnectionStatus = async (connectionId, status) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/connections/${connectionId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/connections/${connectionId}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -118,7 +115,7 @@ const Dashboard = () => {
   const handleRateConnection = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:5000/api/connections/${selectedConnection._id}/rate`, {
+      const res = await fetch(`${API_BASE_URL}/api/connections/${selectedConnection._id}/rate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +145,7 @@ const Dashboard = () => {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:5000/api/connections/${connectionId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/connections/${connectionId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -170,7 +167,7 @@ const Dashboard = () => {
 
   const handleRequestStatus = async (requestId, status) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/requests/${requestId}`, {
+      const res = await fetch(`${API_BASE_URL}/api/requests/${requestId}`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -192,7 +189,7 @@ const Dashboard = () => {
 
   const handleMarkCompleted = async (sessionId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/sessions/${sessionId}/complete`, {
+      const res = await fetch(`${API_BASE_URL}/api/sessions/${sessionId}/complete`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -211,7 +208,7 @@ const Dashboard = () => {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:5000/api/sessions`, {
+      const res = await fetch(`${API_BASE_URL}/api/sessions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -243,7 +240,7 @@ const Dashboard = () => {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:5000/api/sessions/${sessionId}/cancel`, {
+      const res = await fetch(`${API_BASE_URL}/api/sessions/${sessionId}/cancel`, {
         method: 'PUT',
         headers: { Authorization: `Bearer ${token}` }
       });

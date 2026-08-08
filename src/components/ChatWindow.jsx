@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { Send, Paperclip, File, Image as ImageIcon, X, Check, CheckCheck } from 'lucide-react';
 import io from 'socket.io-client';
+import { API_BASE_URL, getMediaUrl } from '../config/api';
 
 const ChatWindow = ({ chatWith, onClose }) => {
     const { user, token } = useContext(AuthContext);
@@ -12,7 +13,7 @@ const ChatWindow = ({ chatWith, onClose }) => {
     const scrollRef = useRef();
 
     useEffect(() => {
-        const newSocket = io('http://localhost:5000');
+        const newSocket = io(API_BASE_URL);
         setSocket(newSocket);
         newSocket.emit('join', user.id);
 
@@ -35,7 +36,7 @@ const ChatWindow = ({ chatWith, onClose }) => {
 
         // Load History
         const fetchHistory = async () => {
-            const res = await fetch(`http://localhost:5000/api/chat/${chatWith._id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/chat/${chatWith._id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await res.json();
@@ -83,7 +84,7 @@ const ChatWindow = ({ chatWith, onClose }) => {
         formData.append('file', file);
 
         try {
-            const res = await fetch('http://localhost:5000/api/chat/upload', {
+            const res = await fetch(`${API_BASE_URL}/api/chat/upload`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
@@ -113,7 +114,7 @@ const ChatWindow = ({ chatWith, onClose }) => {
             <div style={{ padding: '12px 16px', background: 'rgba(15, 23, 42, 0.9)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'var(--color-accent)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '2px solid rgba(255,255,255,0.1)' }}>
-                        {chatWith.profilePhoto ? <img src={chatWith.profilePhoto.startsWith('http') ? chatWith.profilePhoto : `http://localhost:5000${chatWith.profilePhoto}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{chatWith.fullName.charAt(0)}</span>}
+                        {chatWith.profilePhoto ? <img src={getMediaUrl(chatWith.profilePhoto)} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <span style={{ fontWeight: 'bold', fontSize: '1.2rem' }}>{chatWith.fullName.charAt(0)}</span>}
                     </div>
                     <div style={{ textAlign: 'left' }}>
                         <h4 style={{ margin: 0, fontSize: '1.1rem' }}>{chatWith.fullName}</h4>
@@ -148,9 +149,9 @@ const ChatWindow = ({ chatWith, onClose }) => {
                             {msg.messageType === 'file' ? (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                     {msg.fileType?.startsWith('image/') ? (
-                                        <img src={`http://localhost:5000${msg.fileUrl}`} alt="Sent" style={{ maxWidth: '100%', borderRadius: '6px', maxHeight: '250px', cursor: 'pointer' }} onClick={() => window.open(`http://localhost:5000${msg.fileUrl}`)} />
+                                        <img src={getMediaUrl(msg.fileUrl)} alt="Sent" style={{ maxWidth: '100%', borderRadius: '6px', maxHeight: '250px', cursor: 'pointer' }} onClick={() => window.open(getMediaUrl(msg.fileUrl))} />
                                     ) : (
-                                        <a href={`http://localhost:5000${msg.fileUrl}`} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'white', textDecoration: 'none', background: 'rgba(0,0,0,0.3)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
+                                        <a href={getMediaUrl(msg.fileUrl)} target="_blank" rel="noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'white', textDecoration: 'none', background: 'rgba(0,0,0,0.3)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}>
                                             <div style={{ background: 'var(--color-accent)', padding: '6px', borderRadius: '4px' }}><File size={16} /></div>
                                             <span style={{ fontSize: '0.85rem', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{msg.fileName}</span>
                                         </a>

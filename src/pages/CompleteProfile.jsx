@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { FileText, Trash2 } from 'lucide-react';
+import { API_BASE_URL, getMediaUrl } from '../config/api';
 
 const CompleteProfile = () => {
   const { user, token, updateUser, logout } = useContext(AuthContext);
@@ -46,7 +47,7 @@ const CompleteProfile = () => {
         personalEmail: user.personalEmail || ''
       });
       if (user.profilePhoto) {
-        setPhotoPreview(user.profilePhoto.startsWith('http') ? user.profilePhoto : `http://localhost:5000${user.profilePhoto}`);
+        setPhotoPreview(getMediaUrl(user.profilePhoto));
       }
     }
   }, [user]);
@@ -99,7 +100,7 @@ const CompleteProfile = () => {
     
     if (confirmDelete) {
       try {
-        const res = await fetch('http://localhost:5000/api/users/profile', {
+        const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
           method: 'DELETE',
           headers: { 'Authorization': `Bearer ${token}` }
         });
@@ -146,7 +147,7 @@ const CompleteProfile = () => {
       if (photo) {
         const photoData = new FormData();
         photoData.append('profilePhoto', photo);
-        const photoRes = await fetch('http://localhost:5000/api/users/uploadPhoto', {
+        const photoRes = await fetch(`${API_BASE_URL}/api/users/uploadPhoto`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` },
           body: photoData
@@ -157,7 +158,7 @@ const CompleteProfile = () => {
       if (resumeFile) {
         const resumeData = new FormData();
         resumeData.append('resume', resumeFile);
-        const resumeRes = await fetch('http://localhost:5000/api/users/uploadResume', {
+        const resumeRes = await fetch(`${API_BASE_URL}/api/users/uploadResume`, {
           method: 'POST',
           headers: { 'Authorization': `Bearer ${token}` },
           body: resumeData
@@ -165,7 +166,7 @@ const CompleteProfile = () => {
         if (!resumeRes.ok) console.error("Resume upload failed");
       }
 
-      const res = await fetch('http://localhost:5000/api/users/profile', {
+      const res = await fetch(`${API_BASE_URL}/api/users/profile`, {
         method: 'PUT',
         headers: { 
           'Content-Type': 'application/json',
@@ -318,7 +319,7 @@ const CompleteProfile = () => {
             {user.resume && (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '-8px', marginBottom: '8px' }}>
                 <FileText size={16} className="text-accent" />
-                <a href={user.resume.startsWith('http') ? user.resume : `http://localhost:5000${user.resume}`} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', color: 'var(--color-accent)' }}>
+                <a href={getMediaUrl(user.resume)} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.9rem', color: 'var(--color-accent)' }}>
                   View Current Resume/CV
                 </a>
               </div>

@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { API_BASE_URL } from '../config/api';
 
 const Login = () => {
   const [formData, setFormData] = useState({ 
@@ -30,7 +31,7 @@ const Login = () => {
   const onSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ collegeEmail, password, role })
@@ -62,7 +63,7 @@ const Login = () => {
     setIsForgotSubmitting(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/forgot-password-otp', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/forgot-password-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ collegeEmail: forgotEmail })
@@ -92,7 +93,7 @@ const Login = () => {
     setIsForgotSubmitting(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/verify-reset-otp', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/verify-reset-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ collegeEmail: forgotEmail, otp: forgotOtp })
@@ -129,7 +130,7 @@ const Login = () => {
     setIsForgotSubmitting(true);
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/reset-password', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/reset-password`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ collegeEmail: forgotEmail, otp: forgotOtp, newPassword })
